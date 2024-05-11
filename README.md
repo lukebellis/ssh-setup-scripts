@@ -27,17 +27,9 @@ To use any of these scripts, follow these steps:
 2.  Navigate to the repository directory in your terminal.
 3.  Set the script you want to use as executable. For example:
 
-    bash
-
-    Copy code
-
     `chmod +x setup_ssh_for_github.sh`
 
 4.  Run the script from your terminal. For example:
-
-    bash
-
-    Copy code
 
     `./setup_ssh_for_github.sh`
 
