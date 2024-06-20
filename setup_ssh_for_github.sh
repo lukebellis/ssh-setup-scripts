@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Function to check if running in WSL
+is_wsl() {
+  grep -qi microsoft /proc/version
+}
+
 # Install xclip for clipboard functionality
 echo "Checking for xclip installation..."
 if ! command -v xclip &> /dev/null; then
@@ -30,7 +35,15 @@ ssh-add ~/.ssh/$ssh_key_filename
 # Copy SSH public key to clipboard
 echo
 echo "Your SSH public key is:"
-cat ~/.ssh/$ssh_key_filename.pub | tee /dev/clipboard | xclip -selection clipboard
+cat ~/.ssh/$ssh_key_filename.pub
+
+if is_wsl; then
+  echo "Running in WSL. Copying SSH public key to Windows clipboard..."
+  cat ~/.ssh/$ssh_key_filename.pub | clip.exe
+else
+  cat ~/.ssh/$ssh_key_filename.pub | xclip -selection clipboard
+fi
+
 echo "The SSH public key has been copied to your clipboard."
 
 # Configure SSH for GitHub
@@ -65,4 +78,3 @@ fi
 
 echo
 echo "SSH key generation and configuration completed!"
-
