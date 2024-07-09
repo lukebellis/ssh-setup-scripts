@@ -5,13 +5,40 @@ is_wsl() {
   grep -qi microsoft /proc/version
 }
 
+# Function to check if running on macOS
+is_macos() {
+  [[ "$OSTYPE" == "darwin"* ]]
+}
+
+# Function to install xclip on Ubuntu
+install_xclip_ubuntu() {
+  echo "Checking for xclip installation..."
+  if ! command -v xclip &> /dev/null; then
+      echo "xclip not found. Installing xclip..."
+      sudo apt update && sudo apt install -y xclip
+  else
+      echo "xclip is already installed."
+  fi
+}
+
+# Function to install xclip on macOS
+install_xclip_macos() {
+  echo "Checking for xclip installation..."
+  if ! command -v xclip &> /dev/null; then
+      echo "xclip not found. Installing xclip..."
+      brew install xclip
+  else
+      echo "xclip is already installed."
+  fi
+}
+
 # Install xclip for clipboard functionality
-echo "Checking for xclip installation..."
-if ! command -v xclip &> /dev/null; then
-    echo "xclip not found. Installing xclip..."
-    sudo apt update && sudo apt install -y xclip
+if is_wsl; then
+  install_xclip_ubuntu
+elif is_macos; then
+  install_xclip_macos
 else
-    echo "xclip is already installed."
+  install_xclip_ubuntu
 fi
 
 # Prompt user for email, passphrase, and custom filename
@@ -40,6 +67,9 @@ cat ~/.ssh/$ssh_key_filename.pub
 if is_wsl; then
   echo "Running in WSL. Copying SSH public key to Windows clipboard..."
   cat ~/.ssh/$ssh_key_filename.pub | clip.exe
+elif is_macos; then
+  echo "Running on macOS. Copying SSH public key to macOS clipboard..."
+  cat ~/.ssh/$ssh_key_filename.pub | pbcopy
 else
   cat ~/.ssh/$ssh_key_filename.pub | xclip -selection clipboard
 fi
